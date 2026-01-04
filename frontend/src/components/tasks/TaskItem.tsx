@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 import { Check, AlertCircle, Clock, Circle, MoreVertical, Trash, Edit } from 'lucide-react';
-
-interface Task {
-  id: number;
-  title: string;
-  description?: string;
-  completed: boolean;
-  priority: 'high' | 'medium' | 'low';
-  date: string;
-  category: string;
-}
+import { Task } from '../../types/task';
 
 interface TaskItemProps {
   task: Task;
@@ -129,7 +120,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
                 className="flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 onClick={() => {
                   setIsMenuOpen(false);
-                  console.log('Edit task:', task.id);
+                  console.log('Edit task:', task._id ?? task.id);
                 }}
               >
                 <Edit className="w-4 h-4 mr-2" />

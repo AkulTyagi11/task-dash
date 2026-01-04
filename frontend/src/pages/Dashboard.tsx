@@ -8,26 +8,13 @@ import UpcomingTasks from '../components/dashboard/UpcomingTasks';
 import NewTaskModal from '../components/tasks/NewTaskModal';
 import { useAuth } from '../context/AuthContext';
 import { taskAPI } from '../utils/api';
-
-// Type definitions
-type Priority = 'low' | 'medium' | 'high';
-
-interface Task {
-  id: number;
-    _id?: string;
-  title: string;
-  completed: boolean;
-  priority: Priority;
-  date: string;
-  category: string;
-}
+import { Task } from '../types/task';
 
 const Dashboard: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-    const { isAuthenticated, isLoading: authLoading, user } = useAuth();
-    const navigate = useNavigate();
-    const [recentTasks, setRecentTasks] = useState<Task[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated, isLoading: authLoading, user } = useAuth();
+  const navigate = useNavigate();
+  const [recentTasks, setRecentTasks] = useState<Task[]>([]);
 
     // Check authentication
     useEffect(() => {
@@ -42,18 +29,14 @@ const Dashboard: React.FC = () => {
         if (!isAuthenticated) return;
       
         try {
-          setIsLoading(true);
           const fetchedTasks = await taskAPI.getAllTasks();
-          // Convert to expected format and take only recent 5 tasks
-          const tasksWithId = fetchedTasks.slice(0, 5).map((task: any) => ({
+          const tasksWithId: Task[] = fetchedTasks.slice(0, 5).map((task) => ({
             ...task,
-            id: task._id
+            id: task._id ?? task.id
           }));
-          setRecentTasks(tasksWithId as Task[]);
+          setRecentTasks(tasksWithId);
         } catch (error) {
           console.error('Error fetching tasks:', error);
-        } finally {
-          setIsLoading(false);
         }
       };
 
@@ -70,10 +53,10 @@ const Dashboard: React.FC = () => {
 
   // Upcoming deadlines
   const upcomingTasks: Task[] = [
-    { id: 1, title: 'Submit quarterly report', date: '2025-03-17 14:00', category: 'Work', priority: 'high', completed: false },
-    { id: 2, title: 'Team meeting', date: '2025-03-18 09:30', category: 'Work', priority: 'medium', completed: false },
-    { id: 3, title: 'Dentist appointment', date: '2025-03-20 11:00', category: 'Personal', priority: 'high', completed: false },
-    { id: 4, title: 'JavaScript course deadline', date: '2025-03-25 23:59', category: 'Learning', priority: 'medium', completed: false },
+    { id: '1', title: 'Submit quarterly report', date: '2025-03-17 14:00', category: 'Work', priority: 'high', completed: false },
+    { id: '2', title: 'Team meeting', date: '2025-03-18 09:30', category: 'Work', priority: 'medium', completed: false },
+    { id: '3', title: 'Dentist appointment', date: '2025-03-20 11:00', category: 'Personal', priority: 'high', completed: false },
+    { id: '4', title: 'JavaScript course deadline', date: '2025-03-25 23:59', category: 'Learning', priority: 'medium', completed: false },
   ];
 
   const handleNewTask = async (task: Omit<Task, 'id' | 'completed' | '_id'>) => {
@@ -82,7 +65,8 @@ const Dashboard: React.FC = () => {
         ...task,
         completed: false
       });
-      setRecentTasks([{ ...createdTask, id: createdTask._id } as Task, ...recentTasks.slice(0, 4)]);
+      const normalizedTask: Task = { ...createdTask, id: createdTask._id ?? createdTask.id };
+      setRecentTasks([normalizedTask, ...recentTasks.slice(0, 4)]);
     } catch (error) {
       console.error('Error creating task:', error);
     }

@@ -1,12 +1,6 @@
 import React from 'react';
 import { Clock, AlertCircle, Circle } from 'lucide-react';
-
-interface Task {
-  id: number;
-  title: string;
-  date: string;
-  priority: 'high' | 'medium' | 'low';
-}
+import { Task } from '../../types/task';
 
 interface UpcomingTasksProps {
   tasks: Task[];
@@ -39,7 +33,7 @@ const UpcomingTasks: React.FC<UpcomingTasksProps> = ({ tasks }) => {
   return (
     <div className="space-y-3">
       {tasks.map((task) => (
-        <div key={task.id} className="flex items-start p-3 border-b border-gray-200 dark:border-gray-700 last:border-0">
+        <div key={task._id ?? task.id ?? task.title} className="flex items-start p-3 border-b border-gray-200 dark:border-gray-700 last:border-0">
           <div className="flex-shrink-0 mr-3">
             {getPriorityIcon(task.priority)}
           </div>

@@ -1,14 +1,6 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+import { Task } from '../types/task';
 
-interface Task {
-  _id?: string;
-  title: string;
-  description?: string;
-  completed: boolean;
-  priority: 'low' | 'medium' | 'high';
-  category: string;
-  date: string;
-}
+const API_BASE_URL = 'http://localhost:5000/api';
 
 export const taskAPI = {
   // Get all tasks
@@ -38,7 +30,7 @@ export const taskAPI = {
   },
 
   // Create a new task
-  createTask: async (task: Omit<Task, '_id'>): Promise<Task> => {
+  createTask: async (task: Omit<Task, 'id' | '_id'>): Promise<Task> => {
     const response = await fetch(`${API_BASE_URL}/tasks`, {
       method: 'POST',
       headers: {
@@ -56,7 +48,7 @@ export const taskAPI = {
   },
 
   // Update a task
-  updateTask: async (id: string, updates: Partial<Task>): Promise<Task> => {
+  updateTask: async (id: string, updates: Partial<Omit<Task, 'id' | '_id'>>): Promise<Task> => {
     const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
       method: 'PUT',
       headers: {
