@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { CheckCircle, Calendar, MessageSquare, BarChart2, ArrowRight } from 'lucide-react';
 import FeatureCard from '../components/home/FeatureCard';
 import TestimonialCard from '../components/home/TestimonialCard';
+import tyagiImg from '../images/tyagi.png';
+import shantamImg from '../images/shantam.jpg';
+import krishnaImg from '../images/krishna.jpg';
+import vedantImg from '../images/vedant.jpg';
 
 const HomePage: React.FC = () => {
   const features = [
@@ -33,25 +37,25 @@ const HomePage: React.FC = () => {
       name: 'Akul Tyagi',
       role: 'Frontend Developer',
       content: 'Contributed significantly to the website’s frontend, ensuring a smooth and responsive user interface using modern web technologies.',
-      avatar: '/src/components/images/tyagi.jpg',
+      avatar: tyagiImg,
     },
     {
       name: 'Shantam Ranjan',
       role: 'AI/ML Engineer',
       content: 'Developed and integrated AI/ML models, enhancing the system’s intelligence with features like smart recommendations and automation.',
-      avatar: '/src/components/images/shantam.jpg',
+      avatar: shantamImg,
     },
     {
       name: 'Krishna Singh',
       role: 'Backend Developer',
       content: 'Led the backend development, building robust APIs and ensuring seamless data flow between the server and frontend.',
-      avatar: '/src/components/images/krishna.jpg',
+      avatar: krishnaImg,
     },
     {
       name: 'Vedant Jhina',
       role: 'Frontend Developer',
       content: 'Played a key role in designing and implementing the visual components, bringing the website’s layout and interactions to life.',
-      avatar: '/src/components/images/vedant.jpg',
+      avatar: vedantImg,
     },
   ];
 

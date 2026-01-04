@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Search } from 'lucide-react';
 import TaskItem from '../components/tasks/TaskItem';
 import NewTaskModal from '../components/tasks/NewTaskModal';
+import { useAuth } from '../context/AuthContext';
+import { taskAPI } from '../utils/api';
 
 interface Task {
-  id: number;
+  _id?: string;
+  id?: number;
   title: string;
   description?: string;
   completed: boolean;
@@ -18,86 +22,80 @@ const Tasks: React.FC = () => {
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const { isAuthenticated, isLoading: authLoading } = useAuth();
+    const navigate = useNavigate();
 
-  // Mock tasks data
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: 1,
-      title: 'Complete project proposal',
-      description: 'Finish writing the project proposal for the client meeting',
-      completed: false,
-      priority: 'high',
-      date: '2025-03-15',
-      category: 'Work'
-    },
-    {
-      id: 2,
-      title: 'Review team presentations',
-      completed: true,
-      priority: 'medium',
-      date: '2025-03-14',
-      category: 'Work'
-    },
-    {
-      id: 3,
-      title: 'Schedule doctor appointment',
-      completed: false,
-      priority: 'medium',
-      date: '2025-03-17',
-      category: 'Personal'
-    },
-    {
-      id: 4,
-      title: 'Go for a 5k run',
-      description: 'Morning run in the park',
-      completed: false,
-      priority: 'low',
-      date: '2025-03-15',
-      category: 'Health'
-    },
-    {
-      id: 5,
-      title: 'Learn React hooks',
-      completed: true,
-      priority: 'medium',
-      date: '2025-03-12',
-      category: 'Learning'
-    },
-    {
-      id: 6,
-      title: 'Buy groceries',
-      description: 'Milk, eggs, bread, fruits',
-      completed: false,
-      priority: 'high',
-      date: '2025-03-15',
-      category: 'Personal'
-    },
-    {
-      id: 7,
-      title: 'Prepare for team meeting',
-      completed: false,
-      priority: 'high',
-      date: '2025-03-16',
-      category: 'Work'
-    },
-  ]);
+    // Check authentication
+    useEffect(() => {
+      if (!authLoading && !isAuthenticated) {
+        navigate('/login');
+      }
+    }, [isAuthenticated, authLoading, navigate]);
 
-  const toggleTaskCompletion = (taskId: number) => {
-    setTasks(tasks.map(task =>
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    ));
+    // Fetch tasks from backend
+    useEffect(() => {
+      const fetchTasks = async () => {
+        if (!isAuthenticated) return;
+      
+        try {
+          setIsLoading(true);
+          const fetchedTasks = await taskAPI.getAllTasks();
+          // Convert _id to id for compatibility with existing components
+          const tasksWithId = fetchedTasks.map(task => ({
+            ...task,
+            id: task._id
+          }));
+          setTasks(tasksWithId as Task[]);
+        } catch (error) {
+          console.error('Error fetching tasks:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchTasks();
+    }, [isAuthenticated]);
+
+    const toggleTaskCompletion = async (taskId: number | string) => {
+      try {
+        const taskToUpdate = tasks.find(t => t.id === taskId || t._id === taskId);
+        if (!taskToUpdate?._id) return;
+
+        const updatedTask = await taskAPI.toggleTask(taskToUpdate._id);
+        setTasks(tasks.map(task =>
+          (task.id === taskId || task._id === taskId) 
+            ? { ...updatedTask, id: updatedTask._id } 
+            : task
+        ));
+      } catch (error) {
+        console.error('Error toggling task:', error);
+      }
   };
 
-  const deleteTask = (taskId: number) => {
-    setTasks(tasks.filter(task => task.id !== taskId));
+    const deleteTask = async (taskId: number | string) => {
+      try {
+        const taskToDelete = tasks.find(t => t.id === taskId || t._id === taskId);
+        if (!taskToDelete?._id) return;
+
+        await taskAPI.deleteTask(taskToDelete._id);
+        setTasks(tasks.filter(task => task.id !== taskId && task._id !== taskId));
+      } catch (error) {
+        console.error('Error deleting task:', error);
+      }
   };
 
-  const addTask = (newTask: Omit<Task, 'id'>) => {
-    const task = {
-      ...newTask,
-      id: Math.max(0, ...tasks.map(t => t.id)) + 1,
-    };
-    setTasks([task, ...tasks]);
+    const addTask = async (newTask: Omit<Task, 'id' | '_id'>) => {
+      try {
+        const createdTask = await taskAPI.createTask({
+          ...newTask,
+          completed: false
+        });
+        setTasks([{ ...createdTask, id: createdTask._id }, ...tasks]);
+      } catch (error) {
+        console.error('Error creating task:', error);
+      }
   };
 
   const filteredTasks = tasks
@@ -121,6 +119,12 @@ const Tasks: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="text-gray-600 dark:text-gray-400">Loading tasks...</div>
+            </div>
+          ) : (
+            <>
         <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-0">Tasks</h1>
           <button
@@ -207,19 +211,21 @@ const Tasks: React.FC = () => {
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {filteredTasks.map((task) => (
                 <TaskItem
-                  key={task.id}
+                  key={task._id || task.id}
                   task={task}
-                  onToggle={() => toggleTaskCompletion(task.id)}
-                  onDelete={() => deleteTask(task.id)}
+                  onToggle={() => toggleTaskCompletion(task._id || task.id!)}
+                  onDelete={() => deleteTask(task._id || task.id!)}
                 />
               ))}
             </div>
           ) : (
             <div className="py-6 text-center text-gray-500 dark:text-gray-400">
-              No tasks found. Create a new task to get started!
+              {tasks.length === 0 ? 'No tasks yet. Create your first task to get started!' : 'No tasks match your filters.'}
             </div>
           )}
         </div>
+          </>
+        )}
       </div>
 
       {isModalOpen && (
