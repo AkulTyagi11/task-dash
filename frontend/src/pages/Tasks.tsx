@@ -5,17 +5,7 @@ import TaskItem from '../components/tasks/TaskItem';
 import NewTaskModal from '../components/tasks/NewTaskModal';
 import { useAuth } from '../context/AuthContext';
 import { taskAPI } from '../utils/api';
-
-interface Task {
-  _id?: string;
-  id?: number;
-  title: string;
-  description?: string;
-  completed: boolean;
-  priority: 'high' | 'medium' | 'low';
-  date: string;
-  category: string;
-}
+import { Task } from '../types/task';
 
 const Tasks: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,12 +32,11 @@ const Tasks: React.FC = () => {
         try {
           setIsLoading(true);
           const fetchedTasks = await taskAPI.getAllTasks();
-          // Convert _id to id for compatibility with existing components
-          const tasksWithId = fetchedTasks.map(task => ({
+          const tasksWithId: Task[] = fetchedTasks.map((task) => ({
             ...task,
-            id: task._id
+            id: task._id ?? task.id
           }));
-          setTasks(tasksWithId as Task[]);
+          setTasks(tasksWithId);
         } catch (error) {
           console.error('Error fetching tasks:', error);
         } finally {
@@ -58,33 +47,36 @@ const Tasks: React.FC = () => {
       fetchTasks();
     }, [isAuthenticated]);
 
-    const toggleTaskCompletion = async (taskId: number | string) => {
-      try {
-        const taskToUpdate = tasks.find(t => t.id === taskId || t._id === taskId);
-        if (!taskToUpdate?._id) return;
+    const toggleTaskCompletion = async (taskId: string) => {
+      const taskToUpdate = tasks.find(t => t.id === taskId || t._id === taskId);
+      const resolvedId = taskToUpdate?._id ?? taskToUpdate?.id;
+      if (!resolvedId) return;
 
-        const updatedTask = await taskAPI.toggleTask(taskToUpdate._id);
+      try {
+        const updatedTask = await taskAPI.toggleTask(resolvedId);
+        const normalizedTask: Task = { ...updatedTask, id: updatedTask._id ?? updatedTask.id };
         setTasks(tasks.map(task =>
           (task.id === taskId || task._id === taskId) 
-            ? { ...updatedTask, id: updatedTask._id } 
+            ? normalizedTask
             : task
         ));
       } catch (error) {
         console.error('Error toggling task:', error);
       }
-  };
+    };
 
-    const deleteTask = async (taskId: number | string) => {
+    const deleteTask = async (taskId: string) => {
+      const taskToDelete = tasks.find(t => t.id === taskId || t._id === taskId);
+      const resolvedId = taskToDelete?._id ?? taskToDelete?.id;
+      if (!resolvedId) return;
+
       try {
-        const taskToDelete = tasks.find(t => t.id === taskId || t._id === taskId);
-        if (!taskToDelete?._id) return;
-
-        await taskAPI.deleteTask(taskToDelete._id);
+        await taskAPI.deleteTask(resolvedId);
         setTasks(tasks.filter(task => task.id !== taskId && task._id !== taskId));
       } catch (error) {
         console.error('Error deleting task:', error);
       }
-  };
+    };
 
     const addTask = async (newTask: Omit<Task, 'id' | '_id'>) => {
       try {
@@ -92,11 +84,12 @@ const Tasks: React.FC = () => {
           ...newTask,
           completed: false
         });
-        setTasks([{ ...createdTask, id: createdTask._id }, ...tasks]);
+        const normalizedTask: Task = { ...createdTask, id: createdTask._id ?? createdTask.id };
+        setTasks([normalizedTask, ...tasks]);
       } catch (error) {
         console.error('Error creating task:', error);
       }
-  };
+    };
 
   const filteredTasks = tasks
     .filter(task => {
@@ -209,14 +202,23 @@ const Tasks: React.FC = () => {
 
           {filteredTasks.length > 0 ? (
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
-              {filteredTasks.map((task) => (
-                <TaskItem
-                  key={task._id || task.id}
-                  task={task}
-                  onToggle={() => toggleTaskCompletion(task._id || task.id!)}
-                  onDelete={() => deleteTask(task._id || task.id!)}
-                />
-              ))}
+              {filteredTasks.map((task) => {
+                const taskIdentifier = task._id ?? task.id;
+                const key = taskIdentifier ?? task.title;
+
+                return (
+                  <TaskItem
+                    key={key}
+                    task={task}
+                    onToggle={() => {
+                      if (taskIdentifier) toggleTaskCompletion(taskIdentifier);
+                    }}
+                    onDelete={() => {
+                      if (taskIdentifier) deleteTask(taskIdentifier);
+                    }}
+                  />
+                );
+              })}
             </div>
           ) : (
             <div className="py-6 text-center text-gray-500 dark:text-gray-400">

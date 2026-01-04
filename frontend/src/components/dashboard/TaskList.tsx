@@ -1,13 +1,6 @@
 import React from 'react';
 import { Check, X, Clock, AlertCircle, Circle } from 'lucide-react';
-
-interface Task {
-  id: number;
-  title: string;
-  completed: boolean;
-  priority: 'high' | 'medium' | 'low';
-  date: string;
-}
+import { Task } from '../../types/task';
 
 interface TaskListProps {
   tasks: Task[];
@@ -31,7 +24,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
     <div className="space-y-3">
       {tasks.map((task) => (
         <div
-          key={task.id}
+          key={task._id ?? task.id ?? task.title}
           className={`p-3 rounded-lg border ${
             task.completed
               ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50'

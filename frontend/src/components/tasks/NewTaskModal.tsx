@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { Task } from '../../types/task';
 
-interface Task {
-  title: string;
-  description: string;
-  completed: boolean;
-  priority: 'high' | 'medium' | 'low';
-  date: string;
-  category: string;
-}
+type NewTaskInput = Omit<Task, 'id' | '_id'>;
 
 interface NewTaskModalProps {
   onClose: () => void;
-  onSave: (task: Task) => void;
+  onSave: (task: NewTaskInput) => void;
 }
 
 const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave }) => {
@@ -27,7 +21,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave }) => {
     
     if (!title.trim()) return;
     
-    const newTask: Task = {
+    const newTask: NewTaskInput = {
       title,
       description,
       completed: false,
