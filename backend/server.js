@@ -1,16 +1,13 @@
+import 'dotenv/config';
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import MongoStore from 'connect-mongo';
 import connectDB from './config/database.js';
 import './config/passport.js';
 import authRoutes from './routes/auth.js';
 import taskRoutes from './routes/tasks.js';
-
-// Load environment variables
-dotenv.config();
 
 // Initialize Express app
 const app = express();
@@ -31,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 // Session configuration
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    secret: process.env.SESSION_SECRET || '85d0016ac7b3bcca7c23ed9e154d9b445c18e0a74b90b93d912c71c3fe4662ad',
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
