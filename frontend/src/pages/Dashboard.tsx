@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, CheckCircle, Clock, TrendingUp, ListTodo, MoreHorizontal } from 'lucide-react';
 import TaskProgressCard from '../components/dashboard/TaskProgressCard';
 import TaskList from '../components/dashboard/TaskList';
 import ActivityChart from '../components/dashboard/ActivityChart';
 import UpcomingTasks from '../components/dashboard/UpcomingTasks';
 import NewTaskModal from '../components/tasks/NewTaskModal';
+import { useAuth } from '../context/AuthContext';
+import { taskAPI } from '../utils/api';
 
 // Type definitions
 type Priority = 'low' | 'medium' | 'high';
 
 interface Task {
   id: number;
+    _id?: string;
   title: string;
   completed: boolean;
   priority: Priority;
@@ -20,6 +24,41 @@ interface Task {
 
 const Dashboard: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+    const { isAuthenticated, isLoading: authLoading, user } = useAuth();
+    const navigate = useNavigate();
+    const [recentTasks, setRecentTasks] = useState<Task[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Check authentication
+    useEffect(() => {
+      if (!authLoading && !isAuthenticated) {
+        navigate('/login');
+      }
+    }, [isAuthenticated, authLoading, navigate]);
+
+    // Fetch tasks from backend
+    useEffect(() => {
+      const fetchTasks = async () => {
+        if (!isAuthenticated) return;
+      
+        try {
+          setIsLoading(true);
+          const fetchedTasks = await taskAPI.getAllTasks();
+          // Convert to expected format and take only recent 5 tasks
+          const tasksWithId = fetchedTasks.slice(0, 5).map((task: any) => ({
+            ...task,
+            id: task._id
+          }));
+          setRecentTasks(tasksWithId as Task[]);
+        } catch (error) {
+          console.error('Error fetching tasks:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchTasks();
+    }, [isAuthenticated]);
 
   // Mock data for task progress
   const progressData = [
@@ -29,15 +68,6 @@ const Dashboard: React.FC = () => {
     { id: 4, name: 'Learning', completed: 2, total: 6, color: 'bg-amber-500' },
   ];
 
-  // State for recent tasks
-  const [recentTasks, setRecentTasks] = useState<Task[]>([
-    { id: 1, title: 'Update project documentation', completed: false, priority: 'high', date: '2025-03-15', category: 'Work' },
-    { id: 2, title: 'Prepare presentation for client', completed: true, priority: 'medium', date: '2025-03-14', category: 'Work' },
-    { id: 3, title: 'Research new technology stack', completed: false, priority: 'low', date: '2025-03-16', category: 'Learning' },
-    { id: 4, title: 'Morning workout routine', completed: true, priority: 'medium', date: '2025-03-15', category: 'Health' },
-    { id: 5, title: 'Call family', completed: false, priority: 'high', date: '2025-03-15', category: 'Personal' },
-  ]);
-
   // Upcoming deadlines
   const upcomingTasks: Task[] = [
     { id: 1, title: 'Submit quarterly report', date: '2025-03-17 14:00', category: 'Work', priority: 'high', completed: false },
@@ -46,14 +76,16 @@ const Dashboard: React.FC = () => {
     { id: 4, title: 'JavaScript course deadline', date: '2025-03-25 23:59', category: 'Learning', priority: 'medium', completed: false },
   ];
 
-  // Add new task
-  const handleNewTask = (task: Omit<Task, 'id' | 'completed'>) => {
-    const newTask: Task = {
-      id: Math.max(0, ...recentTasks.map(t => t.id)) + 1,
-      ...task,
-      completed: false,
-    };
-    setRecentTasks([newTask, ...recentTasks]);
+  const handleNewTask = async (task: Omit<Task, 'id' | 'completed' | '_id'>) => {
+    try {
+      const createdTask = await taskAPI.createTask({
+        ...task,
+        completed: false
+      });
+      setRecentTasks([{ ...createdTask, id: createdTask._id } as Task, ...recentTasks.slice(0, 4)]);
+    } catch (error) {
+      console.error('Error creating task:', error);
+    }
   };
 
   return (
@@ -62,7 +94,7 @@ const Dashboard: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Welcome back! Here's an overview of your tasks.</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">Welcome back{user?.name ? `, ${user.name.split(' ')[0]}` : ''}! Here's an overview of your tasks.</p>
           </div>
           <div className="mt-4 md:mt-0 flex space-x-2">
             <button className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-md border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
