@@ -1,6 +1,6 @@
 # Task Dashboard - Complete Setup Guide
 
-This guide will help you set up both the backend and frontend for the Task Dashboard application with Google OAuth authentication.
+This is a complete setup guide for the Task Dashboard for both frontend and backend and Google Oauth as well.
 
 ## Overview
 
@@ -116,51 +116,6 @@ Make sure both backend (port 5000) and frontend (port 5173) are running.
 4. Authenticate with your Google account
 5. You'll be redirected to the Dashboard after successful authentication
 
-### 3. Test Features
-
-- **Dashboard**: View task overview and statistics
-- **Tasks**: Create, view, update, and delete tasks
-- **Profile**: View your name and avatar in the header
-- **Logout**: Click your profile icon and select logout
-
----
-
-## Project Structure
-
-```
-task-dash/
-├── backend/
-│   ├── config/
-│   │   ├── database.js          # MongoDB connection
-│   │   └── passport.js          # Google OAuth strategy
-│   ├── middleware/
-│   │   └── auth.js              # Authentication middleware
-│   ├── models/
-│   │   ├── User.js              # User model
-│   │   └── Task.js              # Task model
-│   ├── routes/
-│   │   ├── auth.js              # Auth routes
-│   │   └── tasks.js             # Task CRUD routes
-│   ├── .env                     # Environment variables (create this)
-│   ├── .env.example             # Environment template
-│   ├── package.json
-│   └── server.js                # Express server
-│
-└── frontend/
-    ├── src/
-    │   ├── components/          # Reusable components
-    │   ├── context/
-    │   │   ├── AuthContext.tsx  # Authentication state
-    │   │   └── ThemeContext.tsx # Dark mode
-    │   ├── pages/               # Page components
-    │   ├── utils/
-    │   │   └── api.ts           # Backend API client
-    │   ├── App.tsx
-    │   └── main.tsx
-    ├── package.json
-    └── vite.config.ts
-```
-
 ---
 
 ## API Endpoints
@@ -179,34 +134,6 @@ task-dash/
 - `PUT /api/tasks/:id` - Update task
 - `DELETE /api/tasks/:id` - Delete task
 - `PATCH /api/tasks/:id/toggle` - Toggle completion
-
----
-
-## Common Issues & Solutions
-
-### Backend Issues
-
-**MongoDB Connection Error:**
-- Ensure MongoDB is running
-- Check MONGODB_URI in `.env`
-- For MongoDB Atlas, ensure IP address is whitelisted
-
-**Google OAuth Error:**
-- Verify Client ID and Secret are correct
-- Check authorized redirect URIs match exactly
-- Ensure Google+ API is enabled
-
-### Frontend Issues
-
-**Cannot connect to backend:**
-- Verify backend is running on port 5000
-- Check CORS settings in backend
-- Ensure credentials are included in API calls
-
-**Authentication not persisting:**
-- Check browser cookies are enabled
-- Verify session configuration in backend
-- Clear browser cookies and try again
 
 ---
 
@@ -238,30 +165,8 @@ task-dash/
 
 ---
 
-## Support
-
-For issues or questions, please check:
-- Backend README: `backend/README.md`
-- Frontend README: `frontend/README.md`
-- Google OAuth Setup: [Google Identity Platform](https://developers.google.com/identity)
-
----
-
-## Features
-
-- ✅ Google OAuth 2.0 authentication
-- ✅ User session management
-- ✅ Protected routes
-- ✅ Task CRUD operations
-- ✅ User-specific task isolation
-- ✅ Dark mode support
-- ✅ Responsive design
-- ✅ Task filtering and search
-- ✅ Task categories and priorities
-
 ## Future Enhancements
 
-- Email/password authentication
 - Task sharing and collaboration
 - Calendar integration
 - AI chat functionality
