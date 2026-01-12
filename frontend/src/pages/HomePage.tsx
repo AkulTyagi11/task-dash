@@ -2,11 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle, Calendar, MessageSquare, BarChart2, ArrowRight } from 'lucide-react';
 import FeatureCard from '../components/home/FeatureCard';
-import TestimonialCard from '../components/home/TestimonialCard';
-import tyagiImg from '../images/tyagi.png';
-import shantamImg from '../images/shantam.jpg';
-import krishnaImg from '../images/krishna.jpg';
-import vedantImg from '../images/vedant.jpg';
 
 const HomePage: React.FC = () => {
   const features = [
@@ -29,33 +24,6 @@ const HomePage: React.FC = () => {
       icon: <BarChart2 className="w-10 h-10 text-blue-500" />,
       title: 'Progress Analytics',
       description: 'Visualize your productivity and track completion trends over time.',
-    },
-  ];
-
-  const testimonials = [
-    {
-      name: 'Akul Tyagi',
-      role: 'Frontend Developer',
-      content: 'Contributed significantly to the website’s frontend, ensuring a smooth and responsive user interface using modern web technologies.',
-      avatar: tyagiImg,
-    },
-    {
-      name: 'Shantam Ranjan',
-      role: 'AI/ML Engineer',
-      content: 'Developed and integrated AI/ML models, enhancing the system’s intelligence with features like smart recommendations and automation.',
-      avatar: shantamImg,
-    },
-    {
-      name: 'Krishna Singh',
-      role: 'Backend Developer',
-      content: 'Led the backend development, building robust APIs and ensuring seamless data flow between the server and frontend.',
-      avatar: krishnaImg,
-    },
-    {
-      name: 'Vedant Jhina',
-      role: 'Frontend Developer',
-      content: 'Played a key role in designing and implementing the visual components, bringing the website’s layout and interactions to life.',
-      avatar: vedantImg,
     },
   ];
 
@@ -145,25 +113,6 @@ const HomePage: React.FC = () => {
                 Chat with AI <ArrowRight className="w-4 h-4 ml-1" />
               </Link>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 bg-white dark:bg-gray-800">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Our Team
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
-              Meet our team of capable individuals who are dedicated to making your task management experience seamless and efficient.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <TestimonialCard key={index} {...testimonial} />
-            ))}
           </div>
         </div>
       </section>
