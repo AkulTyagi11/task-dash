@@ -33,27 +33,27 @@ const Header: React.FC = () => {
   return (
     <header 
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled || isMobileMenuOpen ? 'bg-white dark:bg-gray-800 shadow-md' : 'bg-transparent'
+        isScrolled || isMobileMenuOpen ? 'glass shadow-sm' : 'bg-transparent'
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <LayoutDashboard className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
-            <span className="text-xl font-bold text-gray-900 dark:text-white">TaskAI</span>
+            <LayoutDashboard className="w-8 h-8 text-sky-600 dark:text-sky-400" />
+            <span className="text-xl font-bold text-gray-900 dark:text-white">Task Dash</span>
           </Link>
 
           {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-6">
+            <nav className="hidden md:flex items-center space-x-2">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 ${
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-slate-100 dark:hover:bg-slate-800 ${
                   location.pathname === link.path
-                    ? 'text-indigo-600 dark:text-indigo-400'
-                    : 'text-gray-700 dark:text-gray-300'
+                    ? 'text-sky-700 dark:text-sky-300 bg-slate-100 dark:bg-slate-800'
+                    : 'text-slate-700 dark:text-slate-300'
                 }`}
               >
                 {link.icon}
@@ -69,31 +69,31 @@ const Header: React.FC = () => {
               <div className="hidden md:flex items-center space-x-4 relative">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                  className="flex items-center space-x-2 px-3 py-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200"
                 >
                   {user?.avatar ? (
                     <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-sky-600 flex items-center justify-center">
                       <User className="w-5 h-5 text-white" />
                     </div>
                   )}
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{user?.name}</span>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{user?.name}</span>
                 </button>
                 
                 {/* User Dropdown Menu */}
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 top-12 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-700">
-                    <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
+                  <div className="absolute right-0 top-12 w-56 bg-white dark:bg-slate-900 rounded-xl shadow-lg py-1 z-50 border border-slate-200 dark:border-slate-700">
+                    <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700">
+                      <p className="text-sm font-medium text-slate-900 dark:text-white">{user?.name}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.email}</p>
                     </div>
                     <button
                       onClick={() => {
                         setIsUserMenuOpen(false);
                         logout();
                       }}
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                      className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>Logout</span>
@@ -105,13 +105,13 @@ const Header: React.FC = () => {
               <div className="hidden md:flex items-center space-x-2">
                 <Link
                   to="/login"
-                  className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                  className="px-4 py-2 rounded-full text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200"
                 >
                   Log In
                 </Link>
                 <Link
                   to="/signup"
-                  className="px-4 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200"
+                  className="px-4 py-2 rounded-full text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 transition-colors duration-200"
                 >
                   Sign Up
                 </Link>
@@ -121,7 +121,7 @@ const Header: React.FC = () => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-md text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline-none"
+              className="md:hidden p-2 rounded-full text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white focus:outline-none"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (
@@ -136,16 +136,16 @@ const Header: React.FC = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-gray-800 shadow-lg">
+        <div className="md:hidden bg-white dark:bg-slate-900 shadow-lg">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`flex items-center space-x-2 px-3 py-3 rounded-md text-base font-medium transition-colors duration-200 ${
+                className={`flex items-center space-x-2 px-3 py-3 rounded-xl text-base font-medium transition-colors duration-200 ${
                   location.pathname === link.path
-                    ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-gray-700'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    ? 'text-sky-700 dark:text-sky-300 bg-slate-100 dark:bg-slate-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -155,7 +155,7 @@ const Header: React.FC = () => {
             ))}
             
               {/* Mobile Auth Section */}
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
+              <div className="border-t border-slate-200 dark:border-slate-700 pt-2 mt-2">
                 {isAuthenticated ? (
                   <>
                     <div className="px-3 py-2">
@@ -163,13 +163,13 @@ const Header: React.FC = () => {
                         {user?.avatar ? (
                           <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-full bg-sky-600 flex items-center justify-center">
                             <User className="w-5 h-5 text-white" />
                           </div>
                         )}
                         <div>
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
+                          <p className="text-sm font-medium text-slate-900 dark:text-white">{user?.name}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{user?.email}</p>
                         </div>
                       </div>
                     </div>
@@ -178,7 +178,7 @@ const Header: React.FC = () => {
                         setIsMobileMenuOpen(false);
                         logout();
                       }}
-                      className="w-full flex items-center space-x-2 px-3 py-3 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      className="w-full flex items-center space-x-2 px-3 py-3 rounded-xl text-base font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                     >
                       <LogOut className="w-5 h-5" />
                       <span>Logout</span>
@@ -188,7 +188,7 @@ const Header: React.FC = () => {
                   <>
                     <Link
                       to="/login"
-                      className="flex items-center space-x-2 px-3 py-3 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      className="flex items-center space-x-2 px-3 py-3 rounded-xl text-base font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <Key className="w-5 h-5" />
@@ -196,7 +196,7 @@ const Header: React.FC = () => {
                     </Link>
                     <Link
                       to="/signup"
-                      className="flex items-center space-x-2 px-3 py-3 rounded-md text-base font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-gray-700"
+                      className="flex items-center space-x-2 px-3 py-3 rounded-xl text-base font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-slate-800"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <span>Sign Up</span>

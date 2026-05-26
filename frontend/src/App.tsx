@@ -15,7 +15,7 @@ function App() {
     <AuthProvider>
       <ThemeProvider>
         <Router>
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+          <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
             <Header />
             
             <main className="pt-16">

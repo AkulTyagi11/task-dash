@@ -27,11 +27,11 @@ const ActivityChart: React.FC = () => {
             <div key={index} className="flex flex-col items-center justify-end h-full">
               <div className="relative w-full">
                 <div 
-                  className="w-full bg-gray-200 dark:bg-gray-700 rounded-t-sm" 
+                  className="w-full bg-slate-200 dark:bg-slate-800 rounded-t-sm" 
                   style={{ height: `${remainingHeight}%` }}
                 ></div>
                 <div 
-                  className="w-full bg-indigo-500 rounded-b-sm" 
+                  className="w-full bg-sky-500 rounded-b-sm" 
                   style={{ height: `${completedHeight}%` }}
                 ></div>
               </div>
@@ -40,13 +40,13 @@ const ActivityChart: React.FC = () => {
           );
         })}
       </div>
-      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-4">
+      <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-4">
         <div className="flex items-center">
-          <span className="w-3 h-3 bg-indigo-500 rounded-sm mr-1"></span>
+          <span className="w-3 h-3 bg-sky-500 rounded-sm mr-1"></span>
           Completed Tasks
         </div>
         <div className="flex items-center">
-          <span className="w-3 h-3 bg-gray-200 dark:bg-gray-700 rounded-sm mr-1"></span>
+          <span className="w-3 h-3 bg-slate-200 dark:bg-slate-800 rounded-sm mr-1"></span>
           Pending Tasks
         </div>
       </div>

@@ -106,20 +106,20 @@ const ChatBot: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">AI Assistant</h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-1">Chat with your AI task assistant for help and recommendations.</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">AI Assistant</h1>
+          <p className="text-slate-600 dark:text-slate-300 mt-1">Chat with your AI task assistant for help and recommendations.</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden flex flex-col h-[calc(100vh-180px)]">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col h-[calc(100vh-180px)]">
           {/* Chat Header */}
-          <div className="bg-indigo-600 p-4 text-white flex items-center">
+          <div className="bg-sky-600 p-4 text-white flex items-center">
             <Robot className="h-6 w-6 mr-2" />
             <div>
-              <h2 className="font-semibold">TaskAI Assistant</h2>
-              <div className="text-xs text-indigo-200 flex items-center">
+              <h2 className="font-semibold">Task Dash Assistant</h2>
+              <div className="text-xs text-sky-200 flex items-center">
                 <span className="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
                 Online
               </div>
@@ -136,13 +136,13 @@ const ChatBot: React.FC = () => {
                 <div
                   className={`max-w-xs sm:max-w-md lg:max-w-lg rounded-lg p-3 ${
                     message.sender === 'user'
-                      ? 'bg-indigo-600 text-white rounded-br-none'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-bl-none'
+                      ? 'bg-sky-600 text-white rounded-br-none'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-bl-none'
                   }`}
                 >
                   <div className="flex items-center mb-1">
                     {message.sender === 'bot' ? (
-                      <Robot className="h-4 w-4 mr-1 text-indigo-500 dark:text-indigo-400" />
+                      <Robot className="h-4 w-4 mr-1 text-sky-500 dark:text-sky-400" />
                     ) : (
                       <User className="h-4 w-4 mr-1 text-white" />
                     )}
@@ -155,11 +155,11 @@ const ChatBot: React.FC = () => {
             
             {isTyping && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 rounded-bl-none">
+                <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-3 rounded-bl-none">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce delay-100"></div>
-                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce delay-200"></div>
+                    <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce delay-100"></div>
+                    <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce delay-200"></div>
                   </div>
                 </div>
               </div>
@@ -169,15 +169,15 @@ const ChatBot: React.FC = () => {
           </div>
 
           {/* Quick Suggestions */}
-          <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-750 overflow-x-auto">
+          <div className="px-4 py-2 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 overflow-x-auto">
             <div className="flex space-x-2">
               {suggestions.map((suggestion, index) => (
                 <button
                   key={index}
                   onClick={() => handleSuggestionClick(suggestion)}
-                  className="whitespace-nowrap px-3 py-1 text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200 flex items-center"
+                  className="whitespace-nowrap px-3 py-1 text-sm bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200 flex items-center"
                 >
-                  <Zap className="w-3 h-3 mr-1 text-indigo-500" />
+                  <Zap className="w-3 h-3 mr-1 text-sky-500" />
                   {suggestion}
                 </button>
               ))}
@@ -185,7 +185,7 @@ const ChatBot: React.FC = () => {
           </div>
 
           {/* Chat Input */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+          <div className="border-t border-slate-200 dark:border-slate-800 p-4">
             <form onSubmit={handleSubmit} className="flex">
               <input
                 id="chat-input"
@@ -193,11 +193,11 @@ const ChatBot: React.FC = () => {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Type your message..."
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white"
+                className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-l-md focus:outline-none focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 dark:bg-slate-800 dark:text-white"
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700 transition-colors duration-200"
+                className="px-4 py-2 bg-sky-600 text-white rounded-r-md hover:bg-sky-700 transition-colors duration-200"
               >
                 <Send className="w-5 h-5" />
               </button>

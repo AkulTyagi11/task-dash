@@ -20,21 +20,29 @@ const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
     }
   };
 
+  const formatDate = (value: string) => {
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return value;
+    }
+    return parsed.toLocaleDateString();
+  };
+
   return (
     <div className="space-y-3">
       {tasks.map((task) => (
         <div
           key={task._id ?? task.id ?? task.title}
-          className={`p-3 rounded-lg border ${
+          className={`p-3 rounded-2xl border ${
             task.completed
-              ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50'
-              : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
+              ? 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50'
+              : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'
           } transition-all duration-200 hover:shadow-sm`}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <button
-                className={`flex-shrink-0 w-5 h-5 rounded-full border ${
+                className={`shrink-0 w-5 h-5 rounded-full border ${
                   task.completed
                     ? 'bg-green-500 border-green-500 dark:bg-green-600 dark:border-green-600 flex items-center justify-center'
                     : 'border-gray-300 dark:border-gray-600'
@@ -46,15 +54,15 @@ const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
                 <span
                   className={`font-medium ${
                     task.completed
-                      ? 'text-gray-500 dark:text-gray-400 line-through'
-                      : 'text-gray-900 dark:text-white'
+                      ? 'text-slate-500 dark:text-slate-400 line-through'
+                      : 'text-slate-900 dark:text-white'
                   }`}
                 >
                   {task.title}
                 </span>
                 <div className="flex items-center mt-1 space-x-2">
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {task.date}
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    {formatDate(task.date)}
                   </span>
                   <div className="flex items-center" title={`Priority: ${task.priority}`}>
                     {getPriorityIcon(task.priority)}
@@ -63,7 +71,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
               </div>
             </div>
             <div className="flex space-x-1">
-              <button className="p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+              <button className="p-1 text-slate-400 hover:text-slate-500 dark:hover:text-slate-300 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
                 <X className="w-4 h-4" />
               </button>
             </div>

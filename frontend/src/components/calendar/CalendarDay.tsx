@@ -25,9 +25,9 @@ const CalendarDay: React.FC<CalendarDayProps> = ({ day, onClick, isToday }) => {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'Work':
-        return 'bg-indigo-500 dark:bg-indigo-600';
+        return 'bg-sky-500 dark:bg-sky-600';
       case 'Personal':
-        return 'bg-blue-500 dark:bg-blue-600';
+        return 'bg-emerald-500 dark:bg-emerald-600';
       case 'Health':
         return 'bg-teal-500 dark:bg-teal-600';
       case 'Learning':
@@ -38,29 +38,29 @@ const CalendarDay: React.FC<CalendarDayProps> = ({ day, onClick, isToday }) => {
   };
 
   if (!day) {
-    return <div className="bg-gray-50 dark:bg-gray-850 min-h-[120px]"></div>;
+    return <div className="bg-slate-50 dark:bg-slate-900/60 min-h-30"></div>;
   }
 
   return (
     <div 
       onClick={onClick}
-      className={`bg-white dark:bg-gray-800 min-h-[120px] p-2 transition-colors duration-200 ${
-        onClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-750' : ''
+      className={`bg-white dark:bg-slate-900 min-h-30 p-2 transition-colors duration-200 ${
+        onClick ? 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800' : ''
       }`}
     >
       <div className="flex justify-end">
         <span className={`
           text-sm font-medium w-6 h-6 flex items-center justify-center rounded-full
           ${isToday 
-            ? 'bg-indigo-600 text-white' 
-            : 'text-gray-700 dark:text-gray-300'
+            ? 'bg-sky-600 text-white' 
+            : 'text-slate-700 dark:text-slate-300'
           }
         `}>
           {day.day}
         </span>
       </div>
       
-      <div className="mt-2 space-y-1 max-h-[80px] overflow-hidden">
+      <div className="mt-2 space-y-1 max-h-20 overflow-hidden">
         {day.events.slice(0, 3).map((event) => (
           <div 
             key={event.id}
@@ -71,7 +71,7 @@ const CalendarDay: React.FC<CalendarDayProps> = ({ day, onClick, isToday }) => {
         ))}
         
         {day.events.length > 3 && (
-          <div className="text-xs text-gray-500 dark:text-gray-400 pl-2">
+          <div className="text-xs text-slate-500 dark:text-slate-400 pl-2">
             +{day.events.length - 3} more
           </div>
         )}
