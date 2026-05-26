@@ -40,7 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 // Session configuration
 app.use(
   session({
-    secret: sessionSecret || '85d0016ac7b3bcca7c23ed9e154d9b445c18e0a74b90b93d912c71c3fe4662ad',
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
