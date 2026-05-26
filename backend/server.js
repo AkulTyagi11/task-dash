@@ -12,23 +12,35 @@ import taskRoutes from './routes/tasks.js';
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
+const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+const sessionSecret = process.env.SESSION_SECRET;
+
+if (!sessionSecret) {
+  console.warn('Warning: SESSION_SECRET is not set. Using a default secret is unsafe for production.');
+}
+
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
+app.disable('x-powered-by');
 
 // Connect to MongoDB
 connectDB();
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: frontendUrl,
   credentials: true
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Session configuration
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || '85d0016ac7b3bcca7c23ed9e154d9b445c18e0a74b90b93d912c71c3fe4662ad',
+    secret: sessionSecret || '85d0016ac7b3bcca7c23ed9e154d9b445c18e0a74b90b93d912c71c3fe4662ad',
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
@@ -73,6 +85,11 @@ app.get('/api/user', (req, res) => {
   }
 });
 
+// Handle unknown routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -82,5 +99,5 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-  console.log(`Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+  console.log(`Frontend URL: ${frontendUrl}`);
 });

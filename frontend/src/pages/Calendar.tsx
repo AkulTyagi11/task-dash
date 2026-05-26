@@ -88,32 +88,32 @@ const Calendar: React.FC = () => {
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-0">Calendar</h1>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 md:mb-0">Calendar</h1>
           
           <div className="flex items-center space-x-2">
             <button
               onClick={goToPreviousMonth}
-              className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={goToToday}
-              className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-md border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+              className="px-4 py-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-200"
             >
               Today
             </button>
             <button
               onClick={goToNextMonth}
-              className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
             
-            <span className="ml-4 text-lg font-medium text-gray-700 dark:text-gray-300">
+            <span className="ml-4 text-lg font-medium text-slate-700 dark:text-slate-300">
               {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
             </span>
           </div>
@@ -123,19 +123,19 @@ const Calendar: React.FC = () => {
               setSelectedDate(new Date());
               setIsModalOpen(true);
             }}
-            className="mt-4 md:mt-0 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200 flex items-center"
+            className="mt-4 md:mt-0 px-4 py-2 bg-sky-600 text-white rounded-full hover:bg-sky-700 transition-colors duration-200 flex items-center"
           >
             <Plus className="w-4 h-4 mr-1" />
             Add Event
           </button>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
           {/* Calendar Header */}
           <CalendarHeader weekdays={weekdays} />
           
           {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-px bg-gray-200 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-700">
+          <div className="grid grid-cols-7 gap-px bg-slate-200 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-800">
             {calendarDays.map((day, index) => (
               <CalendarDay 
                 key={index} 

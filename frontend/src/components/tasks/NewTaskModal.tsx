@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Task } from '../../types/task';
 
@@ -7,14 +7,37 @@ type NewTaskInput = Omit<Task, 'id' | '_id'>;
 interface NewTaskModalProps {
   onClose: () => void;
   onSave: (task: NewTaskInput) => void;
+  initialTask?: Task;
 }
 
-const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('medium');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [category, setCategory] = useState('Work');
+const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave, initialTask }) => {
+  const defaultDate = new Date().toISOString().split('T')[0];
+  const [title, setTitle] = useState(initialTask?.title ?? '');
+  const [description, setDescription] = useState(initialTask?.description ?? '');
+  const [priority, setPriority] = useState<'high' | 'medium' | 'low'>(initialTask?.priority ?? 'medium');
+  const [date, setDate] = useState(() => {
+    if (initialTask?.date) {
+      const parsedDate = new Date(initialTask.date);
+      return Number.isNaN(parsedDate.getTime()) ? defaultDate : parsedDate.toISOString().split('T')[0];
+    }
+    return defaultDate;
+  });
+  const [category, setCategory] = useState(initialTask?.category ?? 'Work');
+
+  const isEditMode = Boolean(initialTask);
+
+  useEffect(() => {
+    if (!initialTask) return;
+
+    setTitle(initialTask.title ?? '');
+    setDescription(initialTask.description ?? '');
+    setPriority(initialTask.priority ?? 'medium');
+    setCategory(initialTask.category ?? 'Work');
+    if (initialTask.date) {
+      const parsedDate = new Date(initialTask.date);
+      setDate(Number.isNaN(parsedDate.getTime()) ? defaultDate : parsedDate.toISOString().split('T')[0]);
+    }
+  }, [initialTask, defaultDate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +47,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave }) => {
     const newTask: NewTaskInput = {
       title,
       description,
-      completed: false,
+      completed: initialTask?.completed ?? false,
       priority,
       date,
       category,
@@ -34,23 +57,25 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center p-4">
       <div 
-        className="relative bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6 shadow-xl"
+        className="relative bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-500 dark:hover:text-slate-300"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Add New Task</h2>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+          {isEditMode ? 'Edit Task' : 'Add New Task'}
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="title" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               Task Title
             </label>
             <input
@@ -58,14 +83,14 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave }) => {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 dark:bg-gray-700 dark:text-white"
+              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 dark:bg-slate-800 dark:text-white"
               placeholder="What needs to be done?"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="description" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               Description (Optional)
             </label>
             <textarea
@@ -73,14 +98,14 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave }) => {
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 dark:bg-gray-700 dark:text-white"
+              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 dark:bg-slate-800 dark:text-white"
               placeholder="Add details about this task..."
             ></textarea>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="date" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                 Due Date
               </label>
               <input
@@ -88,19 +113,19 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave }) => {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 dark:bg-slate-800 dark:text-white"
                 required
               />
             </div>
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="category" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                 Category
               </label>
               <select
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 dark:bg-slate-800 dark:text-white"
               >
                 <option value="Work">Work</option>
                 <option value="Personal">Personal</option>
@@ -111,7 +136,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               Priority
             </label>
             <div className="flex space-x-2">
@@ -120,8 +145,8 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave }) => {
                 onClick={() => setPriority('low')}
                 className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors duration-200 ${
                   priority === 'low'
-                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-2 border-blue-500'
-                    : 'bg-blue-50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/20'
+                    ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-800 dark:text-sky-300 border-2 border-sky-500'
+                    : 'bg-sky-50 dark:bg-sky-900/10 text-sky-700 dark:text-sky-400 border border-sky-200 dark:border-sky-800 hover:bg-sky-100 dark:hover:bg-sky-900/20'
                 }`}
               >
                 Low
@@ -142,8 +167,8 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave }) => {
                 onClick={() => setPriority('high')}
                 className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors duration-200 ${
                   priority === 'high'
-                    ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border-2 border-red-500'
-                    : 'bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/20'
+                    ? 'bg-rose-100 dark:bg-rose-900/30 text-rose-800 dark:text-rose-300 border-2 border-rose-500'
+                    : 'bg-rose-50 dark:bg-rose-900/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900/20'
                 }`}
               >
                 High
@@ -155,15 +180,15 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ onClose, onSave }) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+              className="px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 rounded-md shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 dark:focus:ring-sky-400"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="px-4 py-2 bg-sky-600 text-white rounded-md shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
             >
-              Add Task
+              {isEditMode ? 'Save Changes' : 'Add Task'}
             </button>
           </div>
         </form>

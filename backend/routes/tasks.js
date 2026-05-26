@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import Task from '../models/Task.js';
 import { isAuthenticated } from '../middleware/auth.js';
 
@@ -6,6 +7,87 @@ const router = express.Router();
 
 // Apply authentication middleware to all routes
 router.use(isAuthenticated);
+
+const allowedPriorities = new Set(['low', 'medium', 'high']);
+const allowedCategories = new Set(['Work', 'Personal', 'Health', 'Learning', 'Other']);
+
+const parseDateValue = (value) => {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+};
+
+const validateTaskPayload = (payload, options = {}) => {
+  const errors = [];
+  const data = {};
+  const { requireTitle = false, requireDate = false } = options;
+
+  if (payload.title !== undefined) {
+    const trimmed = String(payload.title).trim();
+    if (!trimmed) {
+      errors.push('Title cannot be empty');
+    } else if (trimmed.length > 120) {
+      errors.push('Title must be 120 characters or fewer');
+    } else {
+      data.title = trimmed;
+    }
+  } else if (requireTitle) {
+    errors.push('Title is required');
+  }
+
+  if (payload.description !== undefined) {
+    const trimmed = String(payload.description).trim();
+    if (trimmed.length > 2000) {
+      errors.push('Description must be 2000 characters or fewer');
+    } else {
+      data.description = trimmed;
+    }
+  }
+
+  if (payload.priority !== undefined) {
+    if (!allowedPriorities.has(payload.priority)) {
+      errors.push('Priority must be low, medium, or high');
+    } else {
+      data.priority = payload.priority;
+    }
+  }
+
+  if (payload.category !== undefined) {
+    if (!allowedCategories.has(payload.category)) {
+      errors.push('Category is invalid');
+    } else {
+      data.category = payload.category;
+    }
+  }
+
+  if (payload.completed !== undefined) {
+    if (typeof payload.completed !== 'boolean') {
+      errors.push('Completed must be a boolean');
+    } else {
+      data.completed = payload.completed;
+    }
+  }
+
+  if (payload.date !== undefined) {
+    const parsedDate = parseDateValue(payload.date);
+    if (!parsedDate) {
+      errors.push('Date must be a valid ISO date');
+    } else {
+      data.date = parsedDate;
+    }
+  } else if (requireDate) {
+    errors.push('Date is required');
+  }
+
+  return { data, errors };
+};
+
+router.param('id', (req, res, next, id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid task id' });
+  }
+  return next();
+});
 
 // @route   GET /api/tasks
 // @desc    Get all tasks for the authenticated user
@@ -43,20 +125,18 @@ router.get('/:id', async (req, res) => {
 // @access  Private
 router.post('/', async (req, res) => {
   try {
-    const { title, description, priority, category, date } = req.body;
-    
-    // Validation
-    if (!title || !date) {
-      return res.status(400).json({ error: 'Title and date are required' });
+    const { data, errors } = validateTaskPayload(req.body, {
+      requireTitle: true,
+      requireDate: true
+    });
+
+    if (errors.length) {
+      return res.status(400).json({ error: 'Validation failed', details: errors });
     }
-    
+
     const task = await Task.create({
       user: req.user._id,
-      title,
-      description: description || '',
-      priority: priority || 'medium',
-      category: category || 'Other',
-      date,
+      ...data,
       completed: false
     });
     
@@ -72,22 +152,23 @@ router.post('/', async (req, res) => {
 // @access  Private
 router.put('/:id', async (req, res) => {
   try {
-    const { title, description, completed, priority, category, date } = req.body;
-    
+    const { data, errors } = validateTaskPayload(req.body);
+
+    if (errors.length) {
+      return res.status(400).json({ error: 'Validation failed', details: errors });
+    }
+
+    if (Object.keys(data).length === 0) {
+      return res.status(400).json({ error: 'No valid fields provided for update' });
+    }
+
     const task = await Task.findOne({ _id: req.params.id, user: req.user._id });
     
     if (!task) {
       return res.status(404).json({ error: 'Task not found' });
     }
-    
-    // Update fields if provided
-    if (title !== undefined) task.title = title;
-    if (description !== undefined) task.description = description;
-    if (completed !== undefined) task.completed = completed;
-    if (priority !== undefined) task.priority = priority;
-    if (category !== undefined) task.category = category;
-    if (date !== undefined) task.date = date;
-    
+
+    task.set(data);
     await task.save();
     
     res.json(task);
